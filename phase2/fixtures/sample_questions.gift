@@ -1,0 +1,44 @@
+// Sample GIFT format questions for testing
+// This file demonstrates various question types
+
+::Binary Search::What is the time complexity of binary search in a sorted array?{
+=O(log n)
+~O(n)
+~O(n log n)
+~O(n²)
+}
+
+::Stack::Which data structure uses LIFO (Last In First Out) principle?{
+~Queue
+=Stack
+~Linked List
+~Hash Table
+}
+
+::RAM::What does the acronym 'RAM' stand for?{
+=Random Access Memory
+}
+
+::Encapsulation::In object-oriented programming, what is encapsulation?{
+~Creating multiple instances of a class
+=Bundling data and methods that operate on that data
+~Inheriting properties from a parent class
+~Overriding methods in derived classes
+}
+
+::Merge Sort::What is the name of the sorting algorithm that repeatedly divides the array in half?{
+=Merge Sort
+}
+
+::Full Binary Tree::A binary tree where every node has either 0 or 2 children is called a full binary tree.{TRUE}
+
+::HTTP Methods::Which of the following is NOT a valid HTTP method?{
+~GET
+~POST
+=SEND
+~DELETE
+}
+
+::Singleton::What design pattern ensures a class has only one instance?{
+=Singleton
+}
