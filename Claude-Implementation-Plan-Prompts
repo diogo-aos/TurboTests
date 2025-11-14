@@ -1,582 +1,254 @@
-# Claude's plan for implementation by Claude Code Web
+# Implementation phases
 
-I'd strongly recommend **splitting this into phases** rather than trying to build it all at once. Here's my reasoning and suggested order:
+Excellent question. With UNIX philosophy, the phases shift from **orchestration-centric** to **contract-centric**. Here's how:
 
-## Why Split
+## Core Insight: Data Contracts Are the Architecture
 
-Each phase has different dependencies, complexity levels, and testing strategies. Building incrementally lets you verify each component works before the next depends on it. You'll also catch architectural issues early rather than deep in the codebase.
+Instead of building features in phases, you build **tools in dependency order**, with clear **JSON contracts** between them.
 
-## Suggested Order
+## Revised Phases
 
-**Phase 1: Data structures & GIFT parsing**
-- Define your core models (TestVersion, StudentAssignment, Question, Answer, ScanResult)
-- Build GIFT → JSON parser
-- This is the foundation everything depends on. It's also relatively straightforward and well-scoped
-- Easy to test with sample GIFT files
+### Phase 1: Data Contracts (The Architecture)
 
-**Phase 2: Configuration & document generation setup**
-- Build the configuration schema validator
-- Create the Typst template with scanning markers
-- Generate Typst documents from structured data
-- Verify output looks correct (render a few test documents manually at this stage)
-
-**Phase 3: Scanning/image processing**
-- Marker detection and image rectification
-- Answer field detection and segmentation
-- Preliminary OCR/mark detection
-- This is where things get visually complex—nice to have working documents from Phase 2
-
-**Phase 4: Scoring engine**
-- Compare scanned answers against stored answer key
-- Generate score reports
-- Relatively straightforward once you have good scan data
-
-**Phase 5: Integration & reporting**
-- Tie all phases together
-- Add human-readable report generation (pandoc integration)
-- Error handling across the pipeline
-
-## Synthetic Image Testing (Clever Approach)
-
-For automatic scanning tests **without manual image editing**, use a **roundtrip testing strategy**:
-
-1. **Generate test documents** (Phase 2 output: Typst → PDF via `typst compile`)
-2. **Convert PDFs to images** (PyMuPDF or similar)
-3. **Programmatically "fill" images** using OpenCV:
-   - Draw filled circles/marks at specific coordinates for answers
-   - Add slight noise, rotation, or degradation to simulate real scans
-   - This creates synthetic test data
-4. **Process through your scanning pipeline**, then verify the extracted answers match what you programmatically filled in
-5. **Parametrize tests**: different fill patterns, rotations (±5°), compression artifacts, etc.
-
-This gives you **automated regression testing** that doesn't require manually taking photos or editing images.
-
-## Practical Approach with Claude Code
-
-I'd suggest:
-1. Start with **Phase 1 in one session** (GIFT parser + data models)—scope is clear, dependencies are minimal
-2. **Phase 2 in the next session** (Typst generation)—now you have real data to work with
-3. **Phase 3 separately** because image processing is different skillset; you'll have better context by then
-4. Phases 4 & 5 can potentially combine
-
-For each phase, ask Claude Code to include:
-- Unit tests with sample data
-- Clear docstrings explaining the data flow
-- Configuration files (requirements.txt, pyproject.toml, etc.)
-
-
-
-# Optimal Prompts for Each Phase
-
-## Phase 1: Data Structures & GIFT Parsing
+Define all intermediate file formats as **JSON schemas**. This is your API.
 
 ```
-You are building a test creation and automated scanning system. This is Phase 1: foundation.
-
-## Objective
-Create data models and a GIFT format parser for educational test questions.
-
-## Deliverables
-
-1. **Data Models** (dataclasses or Pydantic, your choice):
-   - Question (id, text, type, options, correct_answer, difficulty)
-   - MultipleChoiceQuestion (inherits: options list, one correct answer)
-   - ShortAnswerQuestion (inherits: correct_answer as text)
-   - TestVersion (version_id, questions list, metadata)
-   - StudentAssignment (student_id, version_id, assigned_questions list)
-   - ScanResult (student_id, question_id, scanned_answer, confidence_score)
-
-2. **GIFT Parser** (gift_parser.py):
-   - Parse GIFT format questions into Question objects
-   - Support at minimum: multiple choice (with ~correct answer and -wrong answers)
-   - Support short answer questions
-   - Handle comments, category tags, and basic metadata
-   - Return list of Question objects
-   - Include error handling with clear messages for malformed GIFT
-
-3. **Unit Tests** (test_gift_parser.py):
-   - Test parsing a multiple choice question
-   - Test parsing a short answer question
-   - Test parsing multiple questions
-   - Test error handling (malformed input, missing fields)
-   - Include sample GIFT content as test fixtures
-
-4. **Sample Data** (samples/questions.gift):
-   - 5-10 realistic exam questions in GIFT format (mix of multiple choice and short answer)
-   - Include metadata and categories
-
-## Technical Requirements
-- Python 3.9+
-- Use dataclasses or Pydantic (prefer Pydantic for validation)
-- No external dependencies beyond standard library + pydantic (if used)
-- Include type hints throughout
-- Add docstrings to all classes and functions
-- Create requirements.txt with dependencies
-
-## File Structure
-```
-phase1/
-├── src/
-│   ├── __init__.py
-│   ├── models.py (data models)
-│   └── gift_parser.py (GIFT parsing logic)
-├── tests/
-│   ├── __init__.py
-│   ├── test_gift_parser.py
-│   └── fixtures/
-│       └── sample_questions.gift
-├── requirements.txt
-└── README.md
+questions.json ← from gift2json
+config.json ← from configgen
+template_layout.json ← from docgen
+scan_result.json ← from imagescan
+scores.json ← from scorer
 ```
 
-## Instructions
-- Keep it simple and focused; no over-engineering
-- Make the code testable (dependency injection where needed)
-- Include a README explaining how to run tests
-- If you encounter ambiguities in GIFT format, document assumptions
-```
+**Deliverable:** JSON schema files + documentation. No code yet.
+
+This is crucial: the contracts define everything.
 
 ---
 
-## Phase 2: Configuration & Typst Document Generation
+### Phase 2: Zero-Dependency Tools
 
-```
-You are building Phase 2 of a test creation system. Phase 1 (GIFT parsing) is complete.
+Build tools with no external tool dependencies first. Test each independently.
 
-## Objective
-Create test configuration schema, Typst templates with scanning markers, and generate test documents for printing.
+**`gift2json`** (no dependencies)
 
-## Deliverables
+- Input: `.gift` file
+- Output: `questions.json`
+- Test: parse sample GIFT, verify output matches schema
 
-1. **Configuration Schema** (config.py):
-   - TestConfig dataclass with fields:
-     - num_versions: int (e.g., 3 versions of same exam)
-     - num_students: int
-     - questions_per_version: int
-     - test_title: str
-     - test_date: str
-     - duration_minutes: int
-     - instructions: str
-     - randomize_questions: bool
-     - randomize_options: bool (for multiple choice)
-   - StudentMapping: dict mapping student_id → version_id
-   - QuestionOrder: dict mapping (student_id, question_number) → (question_id, correct_answer)
-   - Validation: ensure config makes sense (e.g., questions_per_version ≤ total questions)
-   - ConfigValidator class with validate() method
+**`configgen`** (depends only on questions.json format)
 
-2. **Typst Template** (templates/test_template.typ):
-   - Jinja2 templating syntax (e.g., {{ test_title }}, {% for question in questions %})
-   - Include scanning markers:
-     - Version ID marker (top-left corner: large QR code or barcode position)
-     - Student ID marker (top-right corner)
-     - Question counter markers (numbered 1-N)
-     - Answer field markers (circles or boxes for multiple choice, lines for short answer)
-     - Registration marks (corner marks for image rectification: small squares at ±10mm from page corners)
-   - Professional layout: header, instructions, questions with space for answers, footer with version/date
-   - Answer sheet style: separate page or integrated
-   - Document your marker positions (coordinates) in comments for Phase 3 scanning
+- Input: config parameters
+- Output: `config.json`
+- Test: given N questions, verify distribution logic
 
-3. **Document Generator** (document_generator.py):
-   - Input: Question list (from Phase 1), TestConfig, template path
-   - Distribute questions across versions (round-robin or randomized)
-   - Assign students to versions
-   - Generate StudentMapping and QuestionOrder JSON files
-   - Create individual Typst documents for each student
-   - Output: directory with .typ files + .json files for mapping/answers
-   - Include function to call `typst compile` for each .typ file (with error handling)
-   - Handle Typst installation check (warn if Typst not found)
+**`report`** (depends only on scores.json format)
 
-4. **Unit Tests** (test_document_generator.py):
-   - Test config validation (valid/invalid configs)
-   - Test version distribution (questions properly split across versions)
-   - Test student assignment (each student assigned to valid version)
-   - Test Typst file generation (file created, contains expected placeholders replaced)
-   - Test JSON mapping files (StudentMapping and QuestionOrder are correct)
-   - Mock Typst compilation if needed
-
-5. **Integration Test**:
-   - Generate 3 versions × 5 students from sample questions (Phase 1)
-   - Create Typst documents
-   - Verify output structure and files exist
-
-## Technical Requirements
-- Import Question models from Phase 1
-- Use Jinja2 for templating
-- Create valid Typst syntax (research/verify syntax if needed)
-- Include error handling for file I/O and Typst calls
-- Type hints throughout
-- Docstrings for all public methods
-
-## File Structure
-```
-phase2/
-├── src/
-│   ├── __init__.py
-│   ├── config.py (TestConfig, ConfigValidator)
-│   ├── document_generator.py (main logic)
-│   └── models.py (import from phase1)
-├── templates/
-│   └── test_template.typ (Jinja2 + Typst)
-├── tests/
-│   ├── test_config.py
-│   ├── test_document_generator.py
-│   └── fixtures/
-│       └── sample_config.json
-├── requirements.txt
-└── README.md
-```
-
-## Important Notes
-- Document the exact marker positions and sizes in the Typst template (in comments) so Phase 3 can reference them
-- Save StudentMapping and QuestionOrder as JSON files with clear structure
-- Include a README showing example config and how to run generation
-- If Typst fails to install/compile, provide fallback instructions for manual compilation
-```
+- Input: `scores.json`
+- Output: HTML/PDF/markdown
+- Test: mock scores, verify output format
 
 ---
 
-## Phase 3: Scanning, Image Processing & Synthetic Testing
+### Phase 3: Dependent Tools (Sequential Build)
 
-```
-You are building Phase 3: scanning and image processing for the automated test system.
+**`docgen`** (depends on questions.json + config.json)
 
-## Objective
-Detect markers in test images, rectify images, extract answer fields, and create automated synthetic tests.
+- Input: `questions.json` + `config.json` + template
+- Output: PDFs + `template_layout.json` + `question_order.json`
+- Test: use Phase 2 outputs, verify layout JSON matches schema
 
-## Deliverables
+**`imagescan`** (depends on template_layout.json)
 
-1. **Marker Detection & Image Rectification** (image_processor.py):
-   - Function: `detect_registration_marks(image_array) → corners`
-     - Find the 4 corner registration marks from Phase 2 template
-     - Return corner coordinates
-   - Function: `rectify_image(image, corners) → rectified_image`
-     - Use perspective transform (OpenCV) to straighten scanned image
-     - Output: top-down, aligned image
-   - Function: `extract_version_id(rectified_image) → version_id`
-     - Read version marker (QR/barcode position from Phase 2 template)
-     - Return version_id (could use pyzbar for barcode, or template matching)
-   - Function: `extract_student_id(rectified_image) → student_id`
-     - Read student ID marker
-   - Document exact pixel coordinates expected (from Phase 2 template positions)
+- Input: image + `template_layout.json`
+- Output: `scan_result.json`
+- Test: use synthetic filled images from Phase 2 docgen output
 
-2. **Answer Field Extraction** (answer_extractor.py):
-   - Function: `detect_answer_fields(rectified_image, version_id) → list of field_regions`
-     - Load reference QuestionOrder JSON (from Phase 2) for this version
-     - Locate answer field markers (circles or boxes) in image
-     - Return list of (question_id, field_region_image) tuples
-   - Function: `classify_answer(field_region_image) → answer_value`
-     - For multiple choice: detect which circle is filled (threshold-based or contour detection)
-     - For short answer: extract text via basic OCR (pytesseract) or mark detection
-     - Return answer as string/letter
-   - Function: `get_confidence(field_region_image) → float (0-1)`
-     - Estimate confidence in answer detection (e.g., how dark/filled is the mark)
+**`scorer`** (depends on scan_result.json + question_order.json)
 
-3. **Synthetic Test Data Generation** (synthetic_test_generator.py):
-   - Function: `generate_filled_test_image(pdf_path, answers_dict, noise_level=0.5) → image_array`
-     - Input: PDF of test from Phase 2, dict of {question_id: answer}
-     - Convert PDF to image (PyMuPDF or similar)
-     - Programmatically fill answer fields (draw filled circles/marks at marker positions)
-     - Add realistic noise: slight rotation (±3°), blur, compression artifacts
-     - Optionally add slight pencil texture
-     - Return as numpy array
-   - Function: `generate_test_suite(config, questions, num_synthetic_tests=10) → list of (image, expected_answers)`
-     - Generate multiple synthetic filled tests with varying noise/rotation
-     - Useful for automated regression testing
-
-4. **Image Processing Tests** (test_image_processor.py):
-   - Unit test: detect registration marks on synthetic perfect image
-   - Unit test: rectify slightly rotated image
-   - Integration test: full pipeline from filled synthetic image → extracted answers
-   - Test confidence scoring
-   - Round-trip test: fill synthetic image with known answers → extract → verify matches
-
-5. **Test Utilities** (test_utils.py):
-   - Function to generate synthetic test PDFs (or use Phase 2 output)
-   - Function to programmatically create "filled" versions
-   - Fixture data: reference images with known answers
-
-## Technical Requirements
-- OpenCV (cv2) for image processing
-- PyMuPDF (fitz) or similar for PDF → image conversion
-- pyzbar or similar for barcode reading (if using barcodes for IDs)
-- pytesseract for basic OCR (optional, if using short answer scanning)
-- numpy for image array operations
-- Type hints, docstrings throughout
-- Error handling for malformed images
-
-## File Structure
-```
-phase3/
-├── src/
-│   ├── __init__.py
-│   ├── image_processor.py (marker detection, rectification)
-│   ├── answer_extractor.py (field extraction, answer classification)
-│   └── synthetic_test_generator.py (generate synthetic filled tests)
-├── tests/
-│   ├── test_image_processor.py
-│   ├── test_answer_extractor.py
-│   ├── test_utils.py
-│   └── fixtures/
-│       └── reference_images/ (store generated test images here)
-├── requirements.txt
-└── README.md
-```
-
-## Key Assumptions to Document
-- Exact marker positions from Phase 2 template (pixel coordinates)
-- Expected image resolution/DPI
-- Answer field size and fill threshold
-- Supported answer formats (multiple choice only, or also short answer)
-
-## Notes
-- Start with synthetic test generation: create a filled test image → verify you can extract answers perfectly
-- Use those perfect images to build marker detection logic
-- Then add noise/rotation to test robustness
-- This approach means you never need to manually scan or edit images
-```
+- Input: `scan_result.json` + `question_order.json`
+- Output: `scores.json`
+- Test: mock scans, verify scores
 
 ---
 
-## Phase 4: Scoring Engine
+### Phase 4: Composition & Pipelines
 
-```
-You are building Phase 4: automated scoring and report generation.
+Now verify tools compose correctly.
 
-## Objective
-Compare scanned answers against answer keys, calculate scores, and generate reports.
+**Deliverables:**
 
-## Deliverables
+- Shell scripts showing composition (example pipelines)
+- End-to-end tests: GIFT → PDFs → synthetic fills → extraction → scores → report
+- Performance profiling (where are bottlenecks?)
 
-1. **Scoring Engine** (scorer.py):
-   - Class: `Scorer`
-     - Input: list of ScanResult objects (from Phase 3), QuestionOrder JSON (from Phase 2)
-     - Method: `score_test(scan_results, question_order) → ScoreReport`
-       - Compare each scanned_answer against correct_answer from QuestionOrder
-       - Calculate: points_earned, total_points, percentage, letter_grade
-       - Handle partial credit (if applicable, e.g., multiple-select questions)
-       - Return detailed report per question
-   - Grading scheme (configurable):
-     - Points per question (default: 1 point each)
-     - Grade boundaries (e.g., 90% = A, 80% = B, etc.)
-   - Handle edge cases:
-     - Missing answers (no response submitted)
-     - Invalid/ambiguous scans (confidence below threshold)
-     - Question not found in QuestionOrder (data mismatch)
-
-2. **Report Models** (reports.py):
-   - ScoreReport: test_id, student_id, version_id, questions_answered, total_questions, score, percentage, grade, report_date
-   - QuestionScore: question_id, question_text, correct_answer, student_answer, is_correct, points_earned, confidence_score
-   - Include from_dict() and to_dict() for JSON serialization
-   - Aggregate reports: class-level statistics (mean, std dev, distribution)
-
-3. **Report Generation** (report_generator.py):
-   - Function: `generate_json_report(score_report) → dict`
-     - Serialize ScoreReport to structured JSON
-   - Function: `generate_markdown_report(score_report) → str`
-     - Create human-readable markdown (for pandoc conversion or direct reading)
-     - Include: student/version info, questions with answers, grade, statistics
-   - Function: `generate_class_report(list of score_reports) → dict`
-     - Aggregate statistics: average score, distribution, problem questions
-     - Identify students/questions needing attention
-
-4. **Unit Tests** (test_scorer.py):
-   - Test scoring: perfect score, partial score, zero score
-   - Test grading: verify letter grades assigned correctly
-   - Test missing answers: handled without crashes
-   - Test confidence thresholds: low-confidence answers flagged
-   - Test report generation: valid JSON/markdown output
-   - Test aggregate reporting
-
-5. **Integration Test**:
-   - Create sample ScanResults from Phase 3
-   - Score them
-   - Generate reports (JSON, markdown)
-   - Verify accuracy
-
-## Technical Requirements
-- Import ScoreResult from Phase 3, QuestionOrder from Phase 2
-- Use dataclasses or Pydantic for report models
-- JSON serialization (json library or Pydantic)
-- Markdown generation (simple string formatting or markdown library)
-- Type hints, docstrings
-- Configuration for grading scheme (separate config file or class)
-
-## File Structure
-```
-phase4/
-├── src/
-│   ├── __init__.py
-│   ├── scorer.py (Scorer class)
-│   ├── reports.py (ScoreReport, QuestionScore models)
-│   └── report_generator.py (JSON/markdown output)
-├── tests/
-│   ├── test_scorer.py
-│   ├── test_reports.py
-│   ├── test_report_generator.py
-│   └── fixtures/
-│       └── sample_scan_results.json
-├── config/
-│   └── grading_config.json (default grading scheme)
-├── requirements.txt
-└── README.md
-```
-
-## Grading Config Example
-```json
-{
-  "points_per_question": 1,
-  "grade_boundaries": {
-    "A": 0.90,
-    "B": 0.80,
-    "C": 0.70,
-    "D": 0.60,
-    "F": 0.0
-  },
-  "confidence_threshold": 0.75,
-  "low_confidence_action": "flag_for_review"
-}
-```
-
-## Notes
-- Keep scoring logic separate from reporting (single responsibility)
-- Grading scheme should be configurable, not hardcoded
-- Handle missing/ambiguous data gracefully with clear error messages
-```
-
----
-
-## Phase 5: Integration & Pipeline Orchestration
-
-```
-You are building Phase 5: final integration, full pipeline, and human-readable reporting.
-
-## Objective
-Tie all phases together, add CLI/orchestration, and generate final reports.
-
-## Deliverables
-
-1. **Pipeline Orchestrator** (pipeline.py):
-   - Class: `TestPipeline`
-     - Method: `create_tests(gift_file, config_file) → output_dir`
-       - Orchestrate Phases 1-2: parse GIFT, generate documents
-       - Return directory with PDFs, mappings, answer keys
-     - Method: `scan_and_score(image_paths, config_file) → results_dir`
-       - Orchestrate Phases 3-4: process images, extract answers, score
-       - Return directory with score reports, JSON data
-   - Full error handling and logging
-   - Progress reporting (e.g., "Processing image 5/12...")
-
-2. **Command-Line Interface** (cli.py):
-   - Use Click or argparse for commands:
-     - `python cli.py create-tests --gift questions.gift --config config.json --output tests/`
-     - `python cli.py scan-and-score --images test_images/ --config config.json --output results/`
-     - `python cli.py generate-report --scores scores.json --output report.html`
-   - Help text and usage examples
-   - Exit codes for success/failure
-
-3. **Report Generation (Final)** (final_report_generator.py):
-   - Function: `generate_html_report(score_reports, output_file)`
-     - Create professional HTML report (can use pandoc on markdown)
-     - Include: title page, individual scores, class statistics, distribution charts
-     - Optionally use plotly/matplotlib for charts
-   - Function: `generate_pdf_report(html_report)`
-     - Convert HTML → PDF (via pandoc or weasyprint)
-
-4. **Configuration Orchestration** (config_loader.py):
-   - Load and merge configs from all phases
-   - Validate entire pipeline configuration
-   - Provide sensible defaults
-
-5. **Logging & Monitoring** (logger.py):
-   - Structured logging (INFO, WARNING, ERROR levels)
-   - Log file output + console output
-   - Include timestamps, phase info, error details
-
-6. **Integration Tests** (test_pipeline.py):
-   - End-to-end test: create tests → fill synthetically → scan → score → report
-   - Verify entire pipeline output
-   - Test error handling (missing files, invalid configs, etc.)
-
-## Technical Requirements
-- Click or argparse for CLI
-- Logging module (stdlib)
-- Import all Phase 1-4 modules
-- Pandoc for report conversion (optional but recommended)
-- Plotly or matplotlib for charts (optional)
-- Configuration management (e.g., config.yaml or .env files)
-
-## File Structure
-```
-root/
-├── phase1/ (existing from Phase 1)
-├── phase2/ (existing from Phase 2)
-├── phase3/ (existing from Phase 3)
-├── phase4/ (existing from Phase 4)
-├── src/
-│   ├── __init__.py
-│   ├── pipeline.py (TestPipeline orchestrator)
-│   ├── cli.py (command-line interface)
-│   ├── final_report_generator.py
-│   ├── config_loader.py
-│   └── logger.py
-├── tests/
-│   ├── test_pipeline_integration.py
-│   └── fixtures/
-│       └── end_to_end_test_data/
-├── examples/
-│   ├── sample_gift_input.gift
-│   ├── sample_config.json
-│   └── README.md (usage examples)
-├── requirements.txt
-├── README.md (project overview)
-└── setup.py (or pyproject.toml)
-```
-
-## Example CLI Usage
 ```bash
-# Create tests
-python -m cli create-tests \
-  --gift questions.gift \
-  --config test_config.json \
-  --output ./generated_tests \
-  --verbose
+# Test pipeline
+gift2json questions.gift > questions.json
+configgen --versions 3 --students 10 > config.json
+docgen questions.json config.json --output pdfs/
+  # outputs: pdfs/ + template_layout.json + question_order.json
 
-# Scan and score
-python -m cli scan-and-score \
-  --images ./scanned_tests/ \
-  --config test_config.json \
-  --output ./results
+# Synthetic scan test (automated)
+generate_synthetic_fills pdfs/student_*.pdf \
+  --template template_layout.json \
+  --output scans/
 
-# Generate final report
-python -m cli generate-report \
-  --scores ./results/scores.json \
-  --output ./results/final_report.html \
-  --format html
-```
+# Score
+for scan in scans/*.json; do
+  imagescan $scan --layout template_layout.json
+done | scorer --keys question_order.json > scores.json
 
-## Key Deliverables from Previous Phases
-- Phase 1: Question parsing, models
-- Phase 2: Test documents, mappings, answer keys
-- Phase 3: Scanned answers, confidence scores
-- Phase 4: Score reports
-- Phase 5: Unified pipeline + human-readable output
-
-## Notes
-- Make CLI user-friendly with clear error messages
-- Log everything for debugging and auditing
-- Provide example workflows in README
-- Include a glossary/architecture diagram for reference
+report scores.json --format html > report.html
 ```
 
 ---
 
-## Tips for Using These Prompts
+### Phase 5: Robustness & Hardening
 
-1. **Copy-paste the entire prompt** for each phase into Claude Code Web
-2. **One phase per session** (don't combine them)
-3. **Save the output** after each phase (files + requirements.txt)
-4. **Use the output as context** for the next phase (e.g., "Here's Phase 1 output: [paste files]. Now build Phase 2...")
-5. **Test each phase independently** before moving to the next
-6. **Ask for clarifications** if Claude Code needs them (e.g., about Typst installation, specific barcode format, etc.)
+Now optimize tools individually, knowing composition works.
 
-Would you like me to adjust any of these prompts or add additional guidance on how to structure your Phase 1→5 workflow?
+**Per tool:**
+
+- Error handling (graceful degradation)
+- Edge cases (empty input, malformed JSON, etc.)
+- Performance optimization
+- Configuration/tier knobs (from earlier discussion)
+
+---
+
+## Implementation Prompts (UNIX Edition)
+
+### Phase 1 Prompt
+
+```
+Design the data contracts for a modular test creation/scanning system.
+
+## Objective
+Define JSON schemas that are the "API" between independent tools. No code yet.
+
+## Deliverables
+
+1. **questions.json schema**
+   - Minimal example with multiple choice + short answer
+   - Include all metadata needed downstream (id, text, type, options, correct_answer, etc.)
+
+2. **config.json schema**
+   - Test configuration (versions, students, distribution strategy)
+   - Includes tier knobs (question types allowed, distribution strategies available, etc.)
+
+3. **template_layout.json schema**
+   - Describes test PDF layout for scanning
+   - Registration marks, answer field positions, marker types
+   - Example with 5 questions (multiple choice + short answer)
+
+4. **scan_result.json schema**
+   - Output from imagescan
+   - One result per question: {question_id, extracted_answer, confidence}
+   - Include metadata (image source, scan timestamp, markers detected)
+
+5. **scores.json schema**
+   - Scored results: per-question scores, total, grade, confidence flags
+   - Include statistics (mean, std_dev) for class-level reports
+
+6. **Documentation** (contract_specification.md)
+   - Explain each schema
+   - Show example end-to-end flow
+   - Describe assumptions (DPI, image resolution, marker tolerance, etc.)
+
+## Deliverable Structure
+```
+
+phase1/ ├── schemas/ │ ├── questions_schema.json │ ├── config_schema.json │ ├── template_layout_schema.json │ ├── scan_result_schema.json │ └── scores_schema.json ├── examples/ │ ├── questions_example.json │ ├── config_example.json │ ├── template_layout_example.json │ ├── scan_result_example.json │ └── scores_example.json └── contract_specification.md
+
+### Phase 2 Prompt
+
+```
+Build independent tools: gift2json, configgen, report.
+
+These tools have no external tool dependencies—they're pure functions.
+
+[Include separate prompts for each tool, focusing on:]
+- Validate input against schema
+- Transform to output schema
+- Comprehensive error handling
+- Fixtures from Phase 1 examples
+- No orchestration logic yet
+```
+
+### Phase 3 Prompt
+
+```
+Build dependent tools: docgen, imagescan, scorer.
+
+[Include separate prompts for each, emphasizing:]
+- Load input from Phase 1-2 outputs
+- Produce output matching schema
+- Handle all tier configurations
+- Synthetic testing (generate fills → extract → score)
+```
+
+### Phase 4 Prompt
+
+```
+Verify composition: tools work together.
+
+## Objective
+Test end-to-end workflows without modification to individual tools.
+
+## Deliverables
+
+1. **Composition Examples** (shell scripts or Python orchestrator)
+   - show_full_pipeline.sh: GIFT → PDFs → synthetic → scores → report
+   - show_partial_pipeline.sh: questions.json only → report (mock data)
+
+2. **End-to-End Tests**
+   - Use outputs from Phase 2-3 tools as inputs
+   - Verify data flows correctly
+   - No mocking—use real tool outputs
+
+3. **Synthetic Test Automation**
+   - Generate filled test images programmatically
+   - Run through imagescan → scorer
+   - Verify round-trip accuracy
+
+4. **Performance Baseline**
+   - Measure time per tool
+   - Identify bottlenecks
+   - Document expectations
+```
+
+### Phase 5 Prompt
+
+```
+Harden individual tools for production use.
+
+[Per tool:]
+- Edge case handling (empty input, malformed JSON, etc.)
+- Tier configuration integration (load knobs from config)
+- Logging and error reporting
+- Performance optimization (if needed from Phase 4 baseline)
+- Documentation and examples
+```
+
+---
+
+## Key Differences from SaaS-Oriented Approach
+
+|SaaS Phases|UNIX Phases|
+|---|---|
+|Phase 1: Parsing|Phase 1: Define contracts|
+|Phase 2: Generation|Phase 2: Build independent tools|
+|Phase 3: Scanning|Phase 3: Build dependent tools|
+|Phase 4: Scoring|Phase 4: Test composition|
+|Phase 5: Integration|Phase 5: Harden & optimize|
+
+**Why this is better for UNIX philosophy:**
+
+1. **Contracts first** — tools are designed to compose, not bolted together
+2. **Test independently** — each tool testable in isolation
+3. **Reusable** — tools useful outside this system (someone could use just `gift2json` + `configgen`)
+4. **Clear boundaries** — JSON contracts are explicit, not implicit
+5. **Easy to swap** — replace `imagescan` with different algorithm, no other changes needed
+6. **Debuggable** — inspect JSON between tools to find issues
+
