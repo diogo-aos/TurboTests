@@ -1,0 +1,204 @@
+{
+  "version": "1.0.0",
+  "tier": "pro",
+  "test_info": {
+    "title": "Introduction to Computer Science - Midterm Exam",
+    "subtitle": "Fall 2025 Semester",
+    "date": "2025-11-20",
+    "duration_minutes": 90,
+    "instructions": "Answer all questions. Multiple choice questions are worth 1-2 points each. Short answer questions require brief explanations. Use a #2 pencil to fill in answer circles completely.",
+    "total_points": 12
+  },
+  "distribution": {
+    "versions": 3,
+    "students": 30,
+    "strategy": "difficulty_balanced",
+    "randomize_questions": true,
+    "randomize_options": true,
+    "difficulty_balancing": true,
+    "type_balancing": true
+  },
+  "students_list": [
+    {
+      "id": "s001",
+      "name": "Alice Johnson",
+      "email": "alice.johnson@university.edu"
+    },
+    {
+      "id": "s002",
+      "name": "Bob Smith",
+      "email": "bob.smith@university.edu"
+    },
+    {
+      "id": "s003",
+      "name": "Carol Williams",
+      "email": "carol.williams@university.edu"
+    },
+    {
+      "id": "s004",
+      "name": "David Brown",
+      "email": "david.brown@university.edu"
+    },
+    {
+      "id": "s005",
+      "name": "Emma Davis",
+      "email": "emma.davis@university.edu"
+    },
+    {
+      "id": "s006",
+      "name": "Frank Miller",
+      "email": "frank.miller@university.edu"
+    },
+    {
+      "id": "s007",
+      "name": "Grace Wilson",
+      "email": "grace.wilson@university.edu"
+    },
+    {
+      "id": "s008",
+      "name": "Henry Moore",
+      "email": "henry.moore@university.edu"
+    },
+    {
+      "id": "s009",
+      "name": "Iris Taylor",
+      "email": "iris.taylor@university.edu"
+    },
+    {
+      "id": "s010",
+      "name": "Jack Anderson",
+      "email": "jack.anderson@university.edu"
+    },
+    {
+      "id": "s011",
+      "name": "Karen Thomas",
+      "email": "karen.thomas@university.edu"
+    },
+    {
+      "id": "s012",
+      "name": "Leo Jackson",
+      "email": "leo.jackson@university.edu"
+    },
+    {
+      "id": "s013",
+      "name": "Maria White",
+      "email": "maria.white@university.edu"
+    },
+    {
+      "id": "s014",
+      "name": "Nathan Harris",
+      "email": "nathan.harris@university.edu"
+    },
+    {
+      "id": "s015",
+      "name": "Olivia Martin",
+      "email": "olivia.martin@university.edu"
+    },
+    {
+      "id": "s016",
+      "name": "Paul Thompson",
+      "email": "paul.thompson@university.edu"
+    },
+    {
+      "id": "s017",
+      "name": "Quinn Garcia",
+      "email": "quinn.garcia@university.edu"
+    },
+    {
+      "id": "s018",
+      "name": "Rachel Martinez",
+      "email": "rachel.martinez@university.edu"
+    },
+    {
+      "id": "s019",
+      "name": "Samuel Robinson",
+      "email": "samuel.robinson@university.edu"
+    },
+    {
+      "id": "s020",
+      "name": "Tina Clark",
+      "email": "tina.clark@university.edu"
+    },
+    {
+      "id": "s021",
+      "name": "Uma Rodriguez",
+      "email": "uma.rodriguez@university.edu"
+    },
+    {
+      "id": "s022",
+      "name": "Victor Lewis",
+      "email": "victor.lewis@university.edu"
+    },
+    {
+      "id": "s023",
+      "name": "Wendy Lee",
+      "email": "wendy.lee@university.edu"
+    },
+    {
+      "id": "s024",
+      "name": "Xavier Walker",
+      "email": "xavier.walker@university.edu"
+    },
+    {
+      "id": "s025",
+      "name": "Yara Hall",
+      "email": "yara.hall@university.edu"
+    },
+    {
+      "id": "s026",
+      "name": "Zachary Allen",
+      "email": "zachary.allen@university.edu"
+    },
+    {
+      "id": "s027",
+      "name": "Amy Young",
+      "email": "amy.young@university.edu"
+    },
+    {
+      "id": "s028",
+      "name": "Brian King",
+      "email": "brian.king@university.edu"
+    },
+    {
+      "id": "s029",
+      "name": "Catherine Wright",
+      "email": "catherine.wright@university.edu"
+    },
+    {
+      "id": "s030",
+      "name": "Daniel Lopez",
+      "email": "daniel.lopez@university.edu"
+    }
+  ],
+  "template": {
+    "name": "branded",
+    "personalization": {
+      "include_student_name": true,
+      "include_student_photo": false,
+      "include_timestamp": true,
+      "include_qr_code": false
+    },
+    "header": "University Computer Science Department",
+    "footer": "Academic Integrity Policy Applies",
+    "logo_url": "https://university.edu/assets/logo.png"
+  },
+  "scanning": {
+    "registration_mark_density": "standard",
+    "answer_field_type": "circle",
+    "page_size": "A4",
+    "dpi": 300
+  },
+  "tier_restrictions": {
+    "question_types_allowed": [
+      "multiple_choice",
+      "short_answer"
+    ],
+    "max_versions": 10,
+    "max_students": 100,
+    "distribution_strategies_allowed": [
+      "round_robin",
+      "random",
+      "difficulty_balanced"
+    ]
+  }
+}

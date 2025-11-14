@@ -1,0 +1,265 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://turbotests.example.com/schemas/scan_result.json",
+  "title": "Scan Result Schema",
+  "description": "Output from image scanning tool - extracted answers and metadata",
+  "type": "object",
+  "required": ["version", "scan_metadata", "identification", "answers"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version for compatibility tracking",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "default": "1.0.0"
+    },
+    "scan_metadata": {
+      "type": "object",
+      "description": "Metadata about the scanning process",
+      "required": ["scan_timestamp", "image_source"],
+      "properties": {
+        "scan_timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when scan was performed"
+        },
+        "image_source": {
+          "type": "string",
+          "description": "Source image file path or identifier"
+        },
+        "image_hash": {
+          "type": "string",
+          "description": "Hash of source image for integrity verification"
+        },
+        "scanner_version": {
+          "type": "string",
+          "description": "Version of the imagescan tool used"
+        },
+        "processing_time_ms": {
+          "type": "number",
+          "description": "Processing time in milliseconds",
+          "minimum": 0
+        }
+      }
+    },
+    "identification": {
+      "type": "object",
+      "description": "Identified test and student information",
+      "required": ["version_id", "student_id", "confidence"],
+      "properties": {
+        "version_id": {
+          "type": "string",
+          "description": "Extracted test version ID"
+        },
+        "student_id": {
+          "type": "string",
+          "description": "Extracted student ID"
+        },
+        "confidence": {
+          "type": "object",
+          "description": "Confidence scores for identification",
+          "required": ["version_id", "student_id"],
+          "properties": {
+            "version_id": {
+              "type": "number",
+              "description": "Confidence in version ID extraction (0-1)",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "student_id": {
+              "type": "number",
+              "description": "Confidence in student ID extraction (0-1)",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        }
+      }
+    },
+    "rectification": {
+      "type": "object",
+      "description": "Image rectification information",
+      "properties": {
+        "markers_detected": {
+          "type": "integer",
+          "description": "Number of registration marks detected",
+          "minimum": 0
+        },
+        "markers_expected": {
+          "type": "integer",
+          "description": "Number of registration marks expected",
+          "minimum": 0
+        },
+        "rectification_applied": {
+          "type": "boolean",
+          "description": "Whether rectification was applied",
+          "default": false
+        },
+        "skew_angle": {
+          "type": "number",
+          "description": "Detected skew angle in degrees",
+          "minimum": -180,
+          "maximum": 180
+        },
+        "quality_score": {
+          "type": "number",
+          "description": "Overall image quality score (0-1)",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "answers": {
+      "type": "array",
+      "description": "Extracted answers for each question",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["question_id", "extracted_answer", "confidence"],
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "description": "Question identifier (matches questions.json)",
+            "pattern": "^[a-zA-Z0-9_-]+$"
+          },
+          "question_type": {
+            "type": "string",
+            "description": "Type of question",
+            "enum": ["multiple_choice", "short_answer", "essay", "matching", "true_false"]
+          },
+          "extracted_answer": {
+            "description": "Extracted answer - format depends on question type",
+            "oneOf": [
+              {
+                "type": "string",
+                "description": "Single answer (label for MC, text for short answer)"
+              },
+              {
+                "type": "array",
+                "description": "Multiple answers detected",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null",
+                "description": "No answer detected"
+              }
+            ]
+          },
+          "confidence": {
+            "type": "number",
+            "description": "Confidence score for this extraction (0-1)",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "raw_data": {
+            "type": "object",
+            "description": "Raw extraction data for debugging",
+            "properties": {
+              "fill_percentages": {
+                "type": "object",
+                "description": "Fill percentage for each bubble (MC questions)",
+                "additionalProperties": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              },
+              "ocr_text": {
+                "type": "string",
+                "description": "Raw OCR text (short answer, essay)"
+              },
+              "ocr_confidence": {
+                "type": "number",
+                "description": "OCR confidence score",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "alternative_readings": {
+                "type": "array",
+                "description": "Alternative OCR readings with confidence scores",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string"
+                    },
+                    "confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "warnings": {
+            "type": "array",
+            "description": "Warnings or issues detected",
+            "items": {
+              "type": "string",
+              "enum": [
+                "low_confidence",
+                "multiple_bubbles_filled",
+                "no_bubble_filled",
+                "unclear_mark",
+                "ocr_failed",
+                "region_not_found",
+                "poor_image_quality"
+              ]
+            }
+          },
+          "flags": {
+            "type": "object",
+            "description": "Boolean flags for special conditions",
+            "properties": {
+              "needs_review": {
+                "type": "boolean",
+                "description": "Requires manual review",
+                "default": false
+              },
+              "multiple_answers": {
+                "type": "boolean",
+                "description": "Multiple answers detected",
+                "default": false
+              },
+              "no_answer": {
+                "type": "boolean",
+                "description": "No answer detected",
+                "default": false
+              },
+              "ambiguous": {
+                "type": "boolean",
+                "description": "Ambiguous answer",
+                "default": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "overall_quality": {
+      "type": "object",
+      "description": "Overall scan quality metrics",
+      "properties": {
+        "average_confidence": {
+          "type": "number",
+          "description": "Average confidence across all answers",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "answers_flagged": {
+          "type": "integer",
+          "description": "Number of answers flagged for review",
+          "minimum": 0
+        },
+        "scan_quality": {
+          "type": "string",
+          "description": "Overall scan quality assessment",
+          "enum": ["excellent", "good", "fair", "poor"]
+        }
+      }
+    }
+  }
+}

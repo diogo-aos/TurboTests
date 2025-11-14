@@ -1,0 +1,237 @@
+{
+  "version": "1.0.0",
+  "scoring_metadata": {
+    "scoring_timestamp": "2025-11-20T14:35:00Z",
+    "scorer_version": "scorer-1.0.0",
+    "scoring_model": "partial_credit",
+    "test_info": {
+      "title": "Introduction to Computer Science - Midterm Exam",
+      "date": "2025-11-20",
+      "total_points": 12
+    }
+  },
+  "student_results": [
+    {
+      "student_id": "s001",
+      "student_name": "Alice Johnson",
+      "version_id": "v1",
+      "scan_reference": "/scans/student_s001_version_v1.jpg",
+      "question_scores": [
+        {
+          "question_id": "q1",
+          "question_number": 1,
+          "question_type": "multiple_choice",
+          "student_answer": "B",
+          "correct_answer": "B",
+          "points_earned": 2,
+          "points_possible": 2,
+          "is_correct": true,
+          "partial_credit": false,
+          "confidence": 0.97,
+          "flags": []
+        },
+        {
+          "question_id": "q2",
+          "question_number": 2,
+          "question_type": "multiple_choice",
+          "student_answer": "B",
+          "correct_answer": "B",
+          "points_earned": 1,
+          "points_possible": 1,
+          "is_correct": true,
+          "partial_credit": false,
+          "confidence": 0.95,
+          "flags": []
+        },
+        {
+          "question_id": "q3",
+          "question_number": 3,
+          "question_type": "short_answer",
+          "student_answer": "Random Access Memory",
+          "correct_answer": "Random Access Memory",
+          "points_earned": 1,
+          "points_possible": 1,
+          "is_correct": true,
+          "partial_credit": false,
+          "confidence": 0.93,
+          "flags": []
+        },
+        {
+          "question_id": "q4",
+          "question_number": 4,
+          "question_type": "multiple_choice",
+          "student_answer": "B",
+          "correct_answer": "B",
+          "points_earned": 2,
+          "points_possible": 2,
+          "is_correct": true,
+          "partial_credit": false,
+          "confidence": 0.99,
+          "feedback": "Excellent! Encapsulation is a fundamental OOP principle.",
+          "flags": []
+        },
+        {
+          "question_id": "q5",
+          "question_number": 5,
+          "question_type": "short_answer",
+          "student_answer": "Merge Sort",
+          "correct_answer": "Merge Sort",
+          "points_earned": 2,
+          "points_possible": 2,
+          "is_correct": true,
+          "partial_credit": false,
+          "confidence": 0.88,
+          "flags": []
+        },
+        {
+          "question_id": "q6",
+          "question_number": 6,
+          "question_type": "true_false",
+          "student_answer": "A",
+          "correct_answer": "A",
+          "points_earned": 1,
+          "points_possible": 1,
+          "is_correct": true,
+          "partial_credit": false,
+          "confidence": 0.96,
+          "flags": []
+        },
+        {
+          "question_id": "q7",
+          "question_number": 7,
+          "question_type": "multiple_choice",
+          "student_answer": "C",
+          "correct_answer": "C",
+          "points_earned": 2,
+          "points_possible": 2,
+          "is_correct": true,
+          "partial_credit": false,
+          "confidence": 0.94,
+          "flags": []
+        },
+        {
+          "question_id": "q8",
+          "question_number": 8,
+          "question_type": "short_answer",
+          "student_answer": null,
+          "correct_answer": "Singleton",
+          "points_earned": 0,
+          "points_possible": 2,
+          "is_correct": false,
+          "partial_credit": false,
+          "confidence": 0.0,
+          "flags": [
+            "no_answer",
+            "manual_review_required"
+          ]
+        }
+      ],
+      "summary": {
+        "total_points_earned": 11,
+        "total_points_possible": 13,
+        "percentage": 84.62,
+        "letter_grade": "B",
+        "questions_correct": 7,
+        "questions_incorrect": 0,
+        "questions_unanswered": 1,
+        "questions_flagged": 1,
+        "average_confidence": 0.83
+      }
+    }
+  ],
+  "class_statistics": {
+    "total_students": 30,
+    "mean_score": 78.5,
+    "median_score": 80.0,
+    "std_dev": 12.3,
+    "min_score": 45.0,
+    "max_score": 100.0,
+    "grade_distribution": {
+      "A": 8,
+      "B": 12,
+      "C": 7,
+      "D": 2,
+      "F": 1
+    },
+    "question_analysis": [
+      {
+        "question_id": "q1",
+        "percent_correct": 85.0,
+        "difficulty": "easy",
+        "discrimination_index": 0.45,
+        "point_biserial": 0.52
+      },
+      {
+        "question_id": "q2",
+        "percent_correct": 90.0,
+        "difficulty": "very_easy",
+        "discrimination_index": 0.38,
+        "point_biserial": 0.41
+      },
+      {
+        "question_id": "q3",
+        "percent_correct": 95.0,
+        "difficulty": "very_easy",
+        "discrimination_index": 0.25,
+        "point_biserial": 0.30
+      },
+      {
+        "question_id": "q4",
+        "percent_correct": 70.0,
+        "difficulty": "medium",
+        "discrimination_index": 0.55,
+        "point_biserial": 0.62
+      },
+      {
+        "question_id": "q5",
+        "percent_correct": 65.0,
+        "difficulty": "medium",
+        "discrimination_index": 0.60,
+        "point_biserial": 0.68
+      },
+      {
+        "question_id": "q6",
+        "percent_correct": 75.0,
+        "difficulty": "easy",
+        "discrimination_index": 0.50,
+        "point_biserial": 0.55
+      },
+      {
+        "question_id": "q7",
+        "percent_correct": 88.0,
+        "difficulty": "easy",
+        "discrimination_index": 0.42,
+        "point_biserial": 0.48
+      },
+      {
+        "question_id": "q8",
+        "percent_correct": 45.0,
+        "difficulty": "hard",
+        "discrimination_index": 0.72,
+        "point_biserial": 0.78
+      }
+    ]
+  },
+  "grading_scale": {
+    "A": {
+      "min": 90,
+      "max": 100
+    },
+    "B": {
+      "min": 80,
+      "max": 89.99
+    },
+    "C": {
+      "min": 70,
+      "max": 79.99
+    },
+    "D": {
+      "min": 60,
+      "max": 69.99
+    },
+    "F": {
+      "min": 0,
+      "max": 59.99
+    }
+  }
+}
