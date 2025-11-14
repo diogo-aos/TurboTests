@@ -1,0 +1,37 @@
+{
+  "version": "1.0.0",
+  "tier": "pro",
+  "test_info": {
+    "title": "CS Quiz",
+    "date": "2025-11-14"
+  },
+  "distribution": {
+    "versions": 3,
+    "students": 15,
+    "strategy": "random",
+    "randomize_questions": true
+  },
+  "template": {
+    "name": "basic"
+  },
+  "scanning": {
+    "registration_mark_density": "standard",
+    "answer_field_type": "circle",
+    "page_size": "A4",
+    "dpi": 300
+  },
+  "tier_restrictions": {
+    "question_types_allowed": [
+      "multiple_choice",
+      "short_answer",
+      "true_false"
+    ],
+    "distribution_strategies_allowed": [
+      "round_robin",
+      "random",
+      "difficulty_balanced"
+    ],
+    "max_versions": 10,
+    "max_students": 100
+  }
+}

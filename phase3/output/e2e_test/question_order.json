@@ -1,0 +1,479 @@
+{
+  "version": "1.0.0",
+  "test_info": {
+    "title": "CS Quiz",
+    "date": "2025-11-14"
+  },
+  "versions": {
+    "v1": {
+      "version_id": "v1",
+      "questions": [
+        {
+          "question_number": 1,
+          "question_id": "Merge_Sort",
+          "question_type": "short_answer",
+          "question_text": "What is the name of the sorting algorithm that repeatedly divides the array in half?",
+          "correct_answer": "Merge Sort",
+          "points": 1
+        },
+        {
+          "question_number": 2,
+          "question_id": "Full_Binary_Tree",
+          "question_type": "true_false",
+          "question_text": "A binary tree where every node has either 0 or 2 children is called a full binary tree.",
+          "correct_answer": "A",
+          "points": 1,
+          "options": [
+            {
+              "label": "A",
+              "text": "True"
+            },
+            {
+              "label": "B",
+              "text": "False"
+            }
+          ]
+        },
+        {
+          "question_number": 3,
+          "question_id": "Singleton",
+          "question_type": "short_answer",
+          "question_text": "What design pattern ensures a class has only one instance?",
+          "correct_answer": "Singleton",
+          "points": 1
+        },
+        {
+          "question_number": 4,
+          "question_id": "HTTP_Methods",
+          "question_type": "multiple_choice",
+          "question_text": "Which of the following is NOT a valid HTTP method?",
+          "correct_answer": "C",
+          "points": 1,
+          "options": [
+            {
+              "label": "A",
+              "text": "GET"
+            },
+            {
+              "label": "B",
+              "text": "POST"
+            },
+            {
+              "label": "C",
+              "text": "SEND"
+            },
+            {
+              "label": "D",
+              "text": "DELETE"
+            }
+          ]
+        },
+        {
+          "question_number": 5,
+          "question_id": "Encapsulation",
+          "question_type": "multiple_choice",
+          "question_text": "In object-oriented programming, what is encapsulation?",
+          "correct_answer": "B",
+          "points": 1,
+          "options": [
+            {
+              "label": "A",
+              "text": "Creating multiple instances of a class"
+            },
+            {
+              "label": "B",
+              "text": "Bundling data and methods that operate on that data"
+            },
+            {
+              "label": "C",
+              "text": "Inheriting properties from a parent class"
+            },
+            {
+              "label": "D",
+              "text": "Overriding methods in derived classes"
+            }
+          ]
+        },
+        {
+          "question_number": 6,
+          "question_id": "Stack",
+          "question_type": "multiple_choice",
+          "question_text": "Which data structure uses LIFO (Last In First Out) principle?",
+          "correct_answer": "B",
+          "points": 1,
+          "options": [
+            {
+              "label": "A",
+              "text": "Queue"
+            },
+            {
+              "label": "B",
+              "text": "Stack"
+            },
+            {
+              "label": "C",
+              "text": "Linked List"
+            },
+            {
+              "label": "D",
+              "text": "Hash Table"
+            }
+          ]
+        },
+        {
+          "question_number": 7,
+          "question_id": "Binary_Search",
+          "question_type": "multiple_choice",
+          "question_text": "What is the time complexity of binary search in a sorted array?",
+          "correct_answer": "A",
+          "points": 1,
+          "options": [
+            {
+              "label": "A",
+              "text": "O(log n)"
+            },
+            {
+              "label": "B",
+              "text": "O(n)"
+            },
+            {
+              "label": "C",
+              "text": "O(n log n)"
+            },
+            {
+              "label": "D",
+              "text": "O(n\u00b2)"
+            }
+          ]
+        },
+        {
+          "question_number": 8,
+          "question_id": "RAM",
+          "question_type": "short_answer",
+          "question_text": "What does the acronym 'RAM' stand for?",
+          "correct_answer": "Random Access Memory",
+          "points": 1
+        }
+      ]
+    },
+    "v2": {
+      "version_id": "v2",
+      "questions": [
+        {
+          "question_number": 1,
+          "question_id": "Encapsulation",
+          "question_type": "multiple_choice",
+          "question_text": "In object-oriented programming, what is encapsulation?",
+          "correct_answer": "B",
+          "points": 1,
+          "options": [
+            {
+              "label": "A",
+              "text": "Creating multiple instances of a class"
+            },
+            {
+              "label": "B",
+              "text": "Bundling data and methods that operate on that data"
+            },
+            {
+              "label": "C",
+              "text": "Inheriting properties from a parent class"
+            },
+            {
+              "label": "D",
+              "text": "Overriding methods in derived classes"
+            }
+          ]
+        },
+        {
+          "question_number": 2,
+          "question_id": "Binary_Search",
+          "question_type": "multiple_choice",
+          "question_text": "What is the time complexity of binary search in a sorted array?",
+          "correct_answer": "A",
+          "points": 1,
+          "options": [
+            {
+              "label": "A",
+              "text": "O(log n)"
+            },
+            {
+              "label": "B",
+              "text": "O(n)"
+            },
+            {
+              "label": "C",
+              "text": "O(n log n)"
+            },
+            {
+              "label": "D",
+              "text": "O(n\u00b2)"
+            }
+          ]
+        },
+        {
+          "question_number": 3,
+          "question_id": "Merge_Sort",
+          "question_type": "short_answer",
+          "question_text": "What is the name of the sorting algorithm that repeatedly divides the array in half?",
+          "correct_answer": "Merge Sort",
+          "points": 1
+        },
+        {
+          "question_number": 4,
+          "question_id": "RAM",
+          "question_type": "short_answer",
+          "question_text": "What does the acronym 'RAM' stand for?",
+          "correct_answer": "Random Access Memory",
+          "points": 1
+        },
+        {
+          "question_number": 5,
+          "question_id": "Stack",
+          "question_type": "multiple_choice",
+          "question_text": "Which data structure uses LIFO (Last In First Out) principle?",
+          "correct_answer": "B",
+          "points": 1,
+          "options": [
+            {
+              "label": "A",
+              "text": "Queue"
+            },
+            {
+              "label": "B",
+              "text": "Stack"
+            },
+            {
+              "label": "C",
+              "text": "Linked List"
+            },
+            {
+              "label": "D",
+              "text": "Hash Table"
+            }
+          ]
+        },
+        {
+          "question_number": 6,
+          "question_id": "Full_Binary_Tree",
+          "question_type": "true_false",
+          "question_text": "A binary tree where every node has either 0 or 2 children is called a full binary tree.",
+          "correct_answer": "A",
+          "points": 1,
+          "options": [
+            {
+              "label": "A",
+              "text": "True"
+            },
+            {
+              "label": "B",
+              "text": "False"
+            }
+          ]
+        },
+        {
+          "question_number": 7,
+          "question_id": "HTTP_Methods",
+          "question_type": "multiple_choice",
+          "question_text": "Which of the following is NOT a valid HTTP method?",
+          "correct_answer": "C",
+          "points": 1,
+          "options": [
+            {
+              "label": "A",
+              "text": "GET"
+            },
+            {
+              "label": "B",
+              "text": "POST"
+            },
+            {
+              "label": "C",
+              "text": "SEND"
+            },
+            {
+              "label": "D",
+              "text": "DELETE"
+            }
+          ]
+        },
+        {
+          "question_number": 8,
+          "question_id": "Singleton",
+          "question_type": "short_answer",
+          "question_text": "What design pattern ensures a class has only one instance?",
+          "correct_answer": "Singleton",
+          "points": 1
+        }
+      ]
+    },
+    "v3": {
+      "version_id": "v3",
+      "questions": [
+        {
+          "question_number": 1,
+          "question_id": "Merge_Sort",
+          "question_type": "short_answer",
+          "question_text": "What is the name of the sorting algorithm that repeatedly divides the array in half?",
+          "correct_answer": "Merge Sort",
+          "points": 1
+        },
+        {
+          "question_number": 2,
+          "question_id": "Full_Binary_Tree",
+          "question_type": "true_false",
+          "question_text": "A binary tree where every node has either 0 or 2 children is called a full binary tree.",
+          "correct_answer": "A",
+          "points": 1,
+          "options": [
+            {
+              "label": "A",
+              "text": "True"
+            },
+            {
+              "label": "B",
+              "text": "False"
+            }
+          ]
+        },
+        {
+          "question_number": 3,
+          "question_id": "HTTP_Methods",
+          "question_type": "multiple_choice",
+          "question_text": "Which of the following is NOT a valid HTTP method?",
+          "correct_answer": "C",
+          "points": 1,
+          "options": [
+            {
+              "label": "A",
+              "text": "GET"
+            },
+            {
+              "label": "B",
+              "text": "POST"
+            },
+            {
+              "label": "C",
+              "text": "SEND"
+            },
+            {
+              "label": "D",
+              "text": "DELETE"
+            }
+          ]
+        },
+        {
+          "question_number": 4,
+          "question_id": "Stack",
+          "question_type": "multiple_choice",
+          "question_text": "Which data structure uses LIFO (Last In First Out) principle?",
+          "correct_answer": "B",
+          "points": 1,
+          "options": [
+            {
+              "label": "A",
+              "text": "Queue"
+            },
+            {
+              "label": "B",
+              "text": "Stack"
+            },
+            {
+              "label": "C",
+              "text": "Linked List"
+            },
+            {
+              "label": "D",
+              "text": "Hash Table"
+            }
+          ]
+        },
+        {
+          "question_number": 5,
+          "question_id": "RAM",
+          "question_type": "short_answer",
+          "question_text": "What does the acronym 'RAM' stand for?",
+          "correct_answer": "Random Access Memory",
+          "points": 1
+        },
+        {
+          "question_number": 6,
+          "question_id": "Encapsulation",
+          "question_type": "multiple_choice",
+          "question_text": "In object-oriented programming, what is encapsulation?",
+          "correct_answer": "B",
+          "points": 1,
+          "options": [
+            {
+              "label": "A",
+              "text": "Creating multiple instances of a class"
+            },
+            {
+              "label": "B",
+              "text": "Bundling data and methods that operate on that data"
+            },
+            {
+              "label": "C",
+              "text": "Inheriting properties from a parent class"
+            },
+            {
+              "label": "D",
+              "text": "Overriding methods in derived classes"
+            }
+          ]
+        },
+        {
+          "question_number": 7,
+          "question_id": "Singleton",
+          "question_type": "short_answer",
+          "question_text": "What design pattern ensures a class has only one instance?",
+          "correct_answer": "Singleton",
+          "points": 1
+        },
+        {
+          "question_number": 8,
+          "question_id": "Binary_Search",
+          "question_type": "multiple_choice",
+          "question_text": "What is the time complexity of binary search in a sorted array?",
+          "correct_answer": "A",
+          "points": 1,
+          "options": [
+            {
+              "label": "A",
+              "text": "O(log n)"
+            },
+            {
+              "label": "B",
+              "text": "O(n)"
+            },
+            {
+              "label": "C",
+              "text": "O(n log n)"
+            },
+            {
+              "label": "D",
+              "text": "O(n\u00b2)"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "student_assignments": {
+    "s001": "v1",
+    "s002": "v2",
+    "s003": "v3",
+    "s004": "v1",
+    "s005": "v2",
+    "s006": "v3",
+    "s007": "v1",
+    "s008": "v2",
+    "s009": "v3",
+    "s010": "v1",
+    "s011": "v2",
+    "s012": "v3",
+    "s013": "v1",
+    "s014": "v2",
+    "s015": "v3"
+  }
+}
