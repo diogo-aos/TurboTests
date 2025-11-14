@@ -1,0 +1,301 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://turbotests.example.com/schemas/template_layout.json",
+  "title": "Template Layout Schema",
+  "description": "Describes the physical layout of test PDFs for scanning and image recognition",
+  "type": "object",
+  "required": ["version", "page_info", "registration_marks", "id_fields", "questions"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version for compatibility tracking",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "default": "1.0.0"
+    },
+    "page_info": {
+      "type": "object",
+      "description": "Page dimensions and settings",
+      "required": ["width_mm", "height_mm", "dpi"],
+      "properties": {
+        "width_mm": {
+          "type": "number",
+          "description": "Page width in millimeters",
+          "minimum": 0
+        },
+        "height_mm": {
+          "type": "number",
+          "description": "Page height in millimeters",
+          "minimum": 0
+        },
+        "dpi": {
+          "type": "integer",
+          "description": "Expected scan DPI",
+          "enum": [150, 200, 300, 600]
+        },
+        "page_size": {
+          "type": "string",
+          "description": "Standard page size",
+          "enum": ["A4", "Letter", "Legal"]
+        },
+        "orientation": {
+          "type": "string",
+          "description": "Page orientation",
+          "enum": ["portrait", "landscape"],
+          "default": "portrait"
+        }
+      }
+    },
+    "registration_marks": {
+      "type": "array",
+      "description": "Registration marks for image rectification (typically 4 corners)",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["id", "x_mm", "y_mm", "type"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Mark identifier (e.g., 'top_left', 'top_right')",
+            "pattern": "^[a-zA-Z0-9_-]+$"
+          },
+          "x_mm": {
+            "type": "number",
+            "description": "X coordinate in mm from top-left origin",
+            "minimum": 0
+          },
+          "y_mm": {
+            "type": "number",
+            "description": "Y coordinate in mm from top-left origin",
+            "minimum": 0
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of registration mark",
+            "enum": ["circle", "square", "cross", "qr_code"]
+          },
+          "size_mm": {
+            "type": "number",
+            "description": "Mark size in mm",
+            "minimum": 0
+          },
+          "fill": {
+            "type": "boolean",
+            "description": "Whether mark is filled or outlined",
+            "default": true
+          }
+        }
+      }
+    },
+    "id_fields": {
+      "type": "object",
+      "description": "Fields identifying the test and student",
+      "required": ["version_id", "student_id"],
+      "properties": {
+        "version_id": {
+          "type": "object",
+          "description": "Test version identifier field",
+          "required": ["x_mm", "y_mm", "width_mm", "height_mm", "type"],
+          "properties": {
+            "x_mm": {
+              "type": "number",
+              "minimum": 0
+            },
+            "y_mm": {
+              "type": "number",
+              "minimum": 0
+            },
+            "width_mm": {
+              "type": "number",
+              "minimum": 0
+            },
+            "height_mm": {
+              "type": "number",
+              "minimum": 0
+            },
+            "type": {
+              "type": "string",
+              "enum": ["barcode", "qr_code", "ocr_text", "bubble_array"]
+            }
+          }
+        },
+        "student_id": {
+          "type": "object",
+          "description": "Student identifier field",
+          "required": ["x_mm", "y_mm", "width_mm", "height_mm", "type"],
+          "properties": {
+            "x_mm": {
+              "type": "number",
+              "minimum": 0
+            },
+            "y_mm": {
+              "type": "number",
+              "minimum": 0
+            },
+            "width_mm": {
+              "type": "number",
+              "minimum": 0
+            },
+            "height_mm": {
+              "type": "number",
+              "minimum": 0
+            },
+            "type": {
+              "type": "string",
+              "enum": ["barcode", "qr_code", "ocr_text", "bubble_array"]
+            }
+          }
+        }
+      }
+    },
+    "questions": {
+      "type": "array",
+      "description": "Layout information for each question",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["question_id", "type", "answer_region"],
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "description": "Question identifier (matches questions.json)",
+            "pattern": "^[a-zA-Z0-9_-]+$"
+          },
+          "type": {
+            "type": "string",
+            "description": "Question type",
+            "enum": ["multiple_choice", "short_answer", "essay", "matching", "true_false"]
+          },
+          "page": {
+            "type": "integer",
+            "description": "Page number (1-indexed)",
+            "minimum": 1,
+            "default": 1
+          },
+          "answer_region": {
+            "type": "object",
+            "description": "Region containing answer fields",
+            "required": ["x_mm", "y_mm", "width_mm", "height_mm"],
+            "properties": {
+              "x_mm": {
+                "type": "number",
+                "description": "X coordinate of answer region",
+                "minimum": 0
+              },
+              "y_mm": {
+                "type": "number",
+                "description": "Y coordinate of answer region",
+                "minimum": 0
+              },
+              "width_mm": {
+                "type": "number",
+                "description": "Width of answer region",
+                "minimum": 0
+              },
+              "height_mm": {
+                "type": "number",
+                "description": "Height of answer region",
+                "minimum": 0
+              }
+            }
+          },
+          "answer_fields": {
+            "type": "array",
+            "description": "Individual answer fields (for multiple choice, true/false)",
+            "items": {
+              "type": "object",
+              "required": ["label", "x_mm", "y_mm", "field_type"],
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Answer label (A, B, C, etc.)",
+                  "pattern": "^[A-Z]$"
+                },
+                "x_mm": {
+                  "type": "number",
+                  "description": "X coordinate of field center",
+                  "minimum": 0
+                },
+                "y_mm": {
+                  "type": "number",
+                  "description": "Y coordinate of field center",
+                  "minimum": 0
+                },
+                "field_type": {
+                  "type": "string",
+                  "description": "Type of answer field",
+                  "enum": ["circle", "box", "rectangle"]
+                },
+                "radius_mm": {
+                  "type": "number",
+                  "description": "Radius for circle fields",
+                  "minimum": 0
+                },
+                "width_mm": {
+                  "type": "number",
+                  "description": "Width for box/rectangle fields",
+                  "minimum": 0
+                },
+                "height_mm": {
+                  "type": "number",
+                  "description": "Height for box/rectangle fields",
+                  "minimum": 0
+                }
+              }
+            }
+          },
+          "ocr_region": {
+            "type": "object",
+            "description": "Region for OCR text extraction (short answer, essay)",
+            "properties": {
+              "x_mm": {
+                "type": "number",
+                "minimum": 0
+              },
+              "y_mm": {
+                "type": "number",
+                "minimum": 0
+              },
+              "width_mm": {
+                "type": "number",
+                "minimum": 0
+              },
+              "height_mm": {
+                "type": "number",
+                "minimum": 0
+              },
+              "expected_lines": {
+                "type": "integer",
+                "description": "Expected number of text lines",
+                "minimum": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "fill_detection": {
+      "type": "object",
+      "description": "Parameters for detecting filled bubbles/boxes",
+      "properties": {
+        "threshold": {
+          "type": "number",
+          "description": "Fill threshold (0-1, percentage of pixels filled)",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.6
+        },
+        "noise_tolerance": {
+          "type": "string",
+          "description": "Noise tolerance level",
+          "enum": ["strict", "standard", "relaxed"],
+          "default": "standard"
+        },
+        "edge_detection": {
+          "type": "boolean",
+          "description": "Use edge detection for better accuracy",
+          "default": true
+        }
+      }
+    }
+  }
+}

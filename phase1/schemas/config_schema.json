@@ -1,0 +1,251 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://turbotests.example.com/schemas/config.json",
+  "title": "Test Configuration Schema",
+  "description": "Configuration for test generation, distribution, and tier features",
+  "type": "object",
+  "required": ["version", "test_info", "distribution"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version for compatibility tracking",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "default": "1.0.0"
+    },
+    "tier": {
+      "type": "string",
+      "description": "Service tier (determines available features)",
+      "enum": ["free", "pro", "enterprise"],
+      "default": "free"
+    },
+    "test_info": {
+      "type": "object",
+      "description": "Basic test information",
+      "required": ["title", "date"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Test title",
+          "minLength": 1
+        },
+        "subtitle": {
+          "type": "string",
+          "description": "Test subtitle or description"
+        },
+        "date": {
+          "type": "string",
+          "format": "date",
+          "description": "Test date (ISO 8601 format)"
+        },
+        "duration_minutes": {
+          "type": "integer",
+          "description": "Test duration in minutes",
+          "minimum": 1
+        },
+        "instructions": {
+          "type": "string",
+          "description": "Instructions for students"
+        },
+        "total_points": {
+          "type": "number",
+          "description": "Total points available (calculated or manual)",
+          "minimum": 0
+        }
+      }
+    },
+    "distribution": {
+      "type": "object",
+      "description": "Test version and student distribution settings",
+      "required": ["versions", "students"],
+      "properties": {
+        "versions": {
+          "type": "integer",
+          "description": "Number of test versions to generate",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "students": {
+          "type": "integer",
+          "description": "Number of students taking the test",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "strategy": {
+          "type": "string",
+          "description": "Distribution strategy for assigning versions",
+          "enum": ["round_robin", "random", "difficulty_balanced", "adaptive"],
+          "default": "round_robin"
+        },
+        "randomize_questions": {
+          "type": "boolean",
+          "description": "Randomize question order per version",
+          "default": false
+        },
+        "randomize_options": {
+          "type": "boolean",
+          "description": "Randomize answer options for multiple choice",
+          "default": false
+        },
+        "difficulty_balancing": {
+          "type": "boolean",
+          "description": "Balance difficulty across versions (pro/enterprise)",
+          "default": false
+        },
+        "type_balancing": {
+          "type": "boolean",
+          "description": "Balance question types across versions (pro/enterprise)",
+          "default": false
+        }
+      }
+    },
+    "students_list": {
+      "type": "array",
+      "description": "List of students (optional - can be generated)",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique student identifier",
+            "pattern": "^[a-zA-Z0-9_-]+$"
+          },
+          "name": {
+            "type": "string",
+            "description": "Student full name",
+            "minLength": 1
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Student email (pro/enterprise)"
+          },
+          "photo_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to student photo (enterprise)"
+          }
+        }
+      }
+    },
+    "template": {
+      "type": "object",
+      "description": "Template customization options",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Template name",
+          "enum": ["basic", "branded", "watermarked"],
+          "default": "basic"
+        },
+        "personalization": {
+          "type": "object",
+          "description": "Personalization settings",
+          "properties": {
+            "include_student_name": {
+              "type": "boolean",
+              "description": "Include student name on test (pro/enterprise)",
+              "default": false
+            },
+            "include_student_photo": {
+              "type": "boolean",
+              "description": "Include student photo on test (enterprise)",
+              "default": false
+            },
+            "include_timestamp": {
+              "type": "boolean",
+              "description": "Include generation timestamp (pro/enterprise)",
+              "default": false
+            },
+            "include_qr_code": {
+              "type": "boolean",
+              "description": "Include QR code for student ID (enterprise)",
+              "default": false
+            }
+          }
+        },
+        "header": {
+          "type": "string",
+          "description": "Custom header text (pro/enterprise)"
+        },
+        "footer": {
+          "type": "string",
+          "description": "Custom footer text (pro/enterprise)"
+        },
+        "logo_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to institution logo (pro/enterprise)"
+        },
+        "watermark": {
+          "type": "string",
+          "description": "Watermark text (enterprise)"
+        }
+      }
+    },
+    "scanning": {
+      "type": "object",
+      "description": "Scanning configuration",
+      "properties": {
+        "registration_mark_density": {
+          "type": "string",
+          "description": "Density of registration marks",
+          "enum": ["standard", "high", "very_high"],
+          "default": "standard"
+        },
+        "answer_field_type": {
+          "type": "string",
+          "description": "Type of answer fields",
+          "enum": ["circle", "box", "rectangle"],
+          "default": "circle"
+        },
+        "page_size": {
+          "type": "string",
+          "description": "Page size",
+          "enum": ["A4", "Letter", "Legal"],
+          "default": "A4"
+        },
+        "dpi": {
+          "type": "integer",
+          "description": "Expected scan DPI",
+          "enum": [150, 200, 300, 600],
+          "default": 300
+        }
+      }
+    },
+    "tier_restrictions": {
+      "type": "object",
+      "description": "Applied tier restrictions (for validation)",
+      "properties": {
+        "question_types_allowed": {
+          "type": "array",
+          "description": "Question types allowed in this tier",
+          "items": {
+            "type": "string",
+            "enum": ["multiple_choice", "short_answer", "essay", "matching", "true_false"]
+          },
+          "default": ["multiple_choice"]
+        },
+        "max_versions": {
+          "type": "integer",
+          "description": "Maximum versions allowed in this tier",
+          "minimum": 1
+        },
+        "max_students": {
+          "type": "integer",
+          "description": "Maximum students allowed in this tier",
+          "minimum": 1
+        },
+        "distribution_strategies_allowed": {
+          "type": "array",
+          "description": "Distribution strategies allowed in this tier",
+          "items": {
+            "type": "string",
+            "enum": ["round_robin", "random", "difficulty_balanced", "adaptive"]
+          },
+          "default": ["round_robin"]
+        }
+      }
+    }
+  }
+}
