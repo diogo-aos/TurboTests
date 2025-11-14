@@ -1,0 +1,94 @@
+{
+  "version": "1.0.0",
+  "scan_metadata": {
+    "scan_timestamp": "2025-11-14T19:09:07.979087Z",
+    "image_source": "synthetic_s002_v2",
+    "scanner_version": "imagescan-1.0.0",
+    "processing_time_ms": 0.05
+  },
+  "identification": {
+    "version_id": "v2",
+    "student_id": "s002",
+    "confidence": {
+      "version_id": 0.99,
+      "student_id": 0.98
+    }
+  },
+  "rectification": {
+    "markers_detected": 4,
+    "markers_expected": 4,
+    "rectification_applied": true,
+    "skew_angle": -1.04
+  },
+  "answers": [
+    {
+      "question_id": "RAM",
+      "question_number": 1,
+      "question_type": "short_answer",
+      "extracted_answer": "Random Access Memory",
+      "confidence": 0.789,
+      "extraction_method": "ocr"
+    },
+    {
+      "question_id": "Binary_Search",
+      "question_number": 5,
+      "question_type": "multiple_choice",
+      "extracted_answer": "C",
+      "confidence": 0.817,
+      "extraction_method": "bubble_detection"
+    },
+    {
+      "question_id": "Singleton",
+      "question_number": 7,
+      "question_type": "short_answer",
+      "extracted_answer": "Singleton",
+      "confidence": 0.793,
+      "extraction_method": "ocr"
+    },
+    {
+      "question_id": "Encapsulation",
+      "question_number": 2,
+      "question_type": "multiple_choice",
+      "extracted_answer": "B",
+      "confidence": 0.89,
+      "extraction_method": "bubble_detection"
+    },
+    {
+      "question_id": "Full_Binary_Tree",
+      "question_number": 8,
+      "question_type": "true_false",
+      "extracted_answer": "A",
+      "confidence": 0.88,
+      "extraction_method": "bubble_detection"
+    },
+    {
+      "question_id": "Merge_Sort",
+      "question_number": 3,
+      "question_type": "short_answer",
+      "extracted_answer": "Merge Sort",
+      "confidence": 0.64,
+      "extraction_method": "ocr"
+    },
+    {
+      "question_id": "HTTP_Methods",
+      "question_number": 6,
+      "question_type": "multiple_choice",
+      "extracted_answer": "C",
+      "confidence": 0.925,
+      "extraction_method": "bubble_detection"
+    },
+    {
+      "question_id": "Stack",
+      "question_number": 4,
+      "question_type": "multiple_choice",
+      "extracted_answer": "B",
+      "confidence": 0.96,
+      "extraction_method": "bubble_detection"
+    }
+  ],
+  "quality_metrics": {
+    "overall_confidence": 0.837,
+    "low_confidence_count": 1,
+    "flags_count": 0
+  }
+}
